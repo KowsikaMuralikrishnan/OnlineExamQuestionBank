@@ -1,76 +1,65 @@
-📘 Online Exam Question Bank & Test Paper Assembly System (JDBC)
-📌 Project Overview
+# 📘 Online Exam Question Bank & Test Paper Assembly System (JDBC)
 
-The Online Exam Question Bank & Test Paper Assembly System is a console-based Java application developed using Core Java, JDBC, and Oracle Database.
+## 📌 Overview
+
+The **Online Exam Question Bank & Test Paper Assembly System** is a console-based Java application developed using **Core Java, JDBC, and Oracle Database**.
 
 This system allows an examination cell to:
 
-Maintain a reusable question bank
+- Maintain a reusable question bank
+- Assemble test papers using difficulty-based blueprints
+- Publish and archive test papers
+- Protect the integrity of published exams
+- Manage questions transactionally
 
-Assemble test papers using difficulty-based blueprints
+The application follows a clean **Layered MVC Architecture (Bean → DAO → Service → Controller)**.
 
-Publish and archive test papers
+---
 
-Protect the integrity of published exams
+## 🚀 Features
 
-Manage questions transactionally
+### 🔹 Question Management
+- Add New Question
+- View Question Details
+- View All Questions
+- Remove Question (with validation)
 
-The application follows a clean MVC architecture with layered design (Bean, DAO, Service, Controller).
+### 🔹 Test Paper Management
+- Create Test Paper (Transactional)
+- Publish Test Paper (Transactional)
+- Archive Test Paper
 
-🚀 Features
-🔹 Question Management
+### 🔹 Validation & Integrity
+- Prevent deletion of questions used in published papers
+- Prevent publishing invalid test papers
+- Validate blueprint difficulty mix
+- Ensure enough ACTIVE questions exist before paper creation
 
-Add New Question
+---
 
-View Question Details
+## 🛠️ Technologies Used
 
-View All Questions
+- Java (Core Java)
+- JDBC
+- Oracle Database
+- SQL
+- Console-based UI
+- MVC Architecture
 
-Remove Question (with integrity validation)
+---
 
-🔹 Test Paper Management
+## 🗄️ Database Setup (Oracle)
 
-Create Test Paper (Transactional)
+### Step 1: Create a New User
 
-Publish Test Paper (Transactional)
-
-Archive Test Paper
-
-🔹 Validation & Integrity
-
-Prevent deletion of questions used in published papers
-
-Prevent publishing invalid papers
-
-Validate blueprint and difficulty mix
-
-Ensure enough ACTIVE questions exist before paper creation
-
-🛠️ Technologies Used
-
-Java (Core Java)
-
-JDBC
-
-Oracle Database
-
-SQL
-
-Console-based UI
-
-MVC Architecture
-
-🗄️ Database Setup (Oracle)
-Step 1: Create New User
+```sql
 sqlplus / as sysdba
 
 CREATE USER exam_user IDENTIFIED BY exam123;
 GRANT CONNECT, RESOURCE TO exam_user;
 COMMIT;
 EXIT;
-
-
-⚠️ Do NOT use scott/tiger account.
+⚠️ Do NOT use the default scott/tiger account.
 
 Step 2: Create Tables (Login as new user)
 📌 QUESTION_TBL
@@ -82,7 +71,6 @@ CREATE TABLE QUESTION_TBL (
     MARKS NUMBER(5,2),
     STATUS VARCHAR2(20)
 );
-
 📌 TEST_PAPER_TBL
 CREATE TABLE TEST_PAPER_TBL (
     PAPER_ID NUMBER(10) PRIMARY KEY,
@@ -92,30 +80,29 @@ CREATE TABLE TEST_PAPER_TBL (
     QUESTION_ID_LIST VARCHAR2(1000),
     STATUS VARCHAR2(20)
 );
-
 📂 Project Structure
-com.exam.app
-    └── ExamMain (Entry Point)
-
-com.exam.service
-    └── ExamService (Business Logic Layer)
-
-com.exam.bean
-    ├── Question
-    └── TestPaper
-
-com.exam.dao
-    ├── QuestionDAO
-    └── TestPaperDAO
-
-com.exam.util
-    ├── DBUtil
-    ├── ValidationException
-    ├── QuestionPoolInsufficientException
-    └── QuestionInPublishedPaperException
-
+src/
+└── com.exam
+    ├── app
+    │   └── ExamMain.java
+    │
+    ├── service
+    │   └── ExamService.java
+    │
+    ├── bean
+    │   ├── Question.java
+    │   └── TestPaper.java
+    │
+    ├── dao
+    │   ├── QuestionDAO.java
+    │   └── TestPaperDAO.java
+    │
+    └── util
+        ├── DBUtil.java
+        ├── ValidationException.java
+        ├── QuestionPoolInsufficientException.java
+        └── QuestionInPublishedPaperException.java
 🧠 System Architecture
-
 The project follows a Layered Architecture:
 
 Bean Layer → Represents database entities
@@ -127,7 +114,6 @@ Service Layer → Contains business logic & validations
 Controller Layer (Main) → Handles console interaction
 
 🔄 Transactional Operations
-
 The following operations are performed inside database transactions:
 
 Create Test Paper
@@ -143,7 +129,6 @@ Atomic updates
 Rollback on failure
 
 📋 Business Rules Enforced
-
 ✔ Question ID must be unique
 ✔ Difficulty must be EASY / MEDIUM / HARD
 ✔ Marks must be positive
@@ -152,41 +137,46 @@ Rollback on failure
 ✔ Must have enough ACTIVE questions to create paper
 ✔ Blueprint total must match required marks
 
-🧪 Sample Test Flow (Console)
-
-Add a Question
-
-Create Test Paper with difficulty mix
-
-Publish Test Paper
-
-Attempt question removal
-
-Archive Test Paper
-
 📊 Status Lifecycle
 Question Status
-
 ACTIVE
 
 INACTIVE
 
 Test Paper Status
-
 DRAFT → PUBLISHED → ARCHIVED
 
-⚠️ Custom Exceptions Used
+🧪 Sample Use Case
+Example difficulty mix:
 
-ValidationException
+Paper Title: DBMS Practice Test
+Subject: DBMS
+Total Marks: 10
+Difficulty Mix: EASY=4,MEDIUM=6,HARD=0
+System will:
 
-QuestionPoolInsufficientException
+Validate inputs
 
-QuestionInPublishedPaperException
+Check question availability
 
-These ensure strict validation and exam integrity.
+Select questions
+
+Store paper as DRAFT
+
+Allow publishing after validation
+
+▶️ How to Run
+Configure Oracle DB credentials in DBUtil.java
+
+Create database tables
+
+Compile the project
+
+Run ExamMain
+
+Perform operations via console
 
 🎯 Key Concepts Demonstrated
-
 JDBC Connection Handling
 
 Transaction Management
@@ -199,36 +189,4 @@ Blueprint-based Paper Assembly
 
 Data Integrity Enforcement
 
-Random Question Selection Logic
-
 Layered System Design
-
-▶️ How to Run
-
-Configure Oracle DB credentials inside DBUtil
-
-Create tables using SQL
-
-Compile project
-
-Run ExamMain
-
-Test operations via console
-
-📌 Sample Use Case
-
-Create a test paper with difficulty mix:
-
-Paper Title: DBMS Practice Test
-Subject: DBMS
-Total Marks: 10
-Difficulty Mix: EASY=4,MEDIUM=6,HARD=0
-
-
-System validates:
-
-Enough ACTIVE questions exist
-
-Marks match blueprint
-
-Paper stored in DRAFT state
